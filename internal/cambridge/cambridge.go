@@ -19,8 +19,8 @@ func NewCambridge(org, product, cookie string) *Cambridge {
 	return &Cambridge{
 		http: resty.New().
 			SetBaseURL(fmt.Sprintf(BASE_CAMBRIDGE_URL, org, product)).
-			SetHeaders(map[string]string{"cambridgeone-app-version": APP_VERSION}).
-			SetCookies([]*http.Cookie{{Name: "c1_sid", Value: cookie}}),
+			SetHeaders(map[string]string{APP_VERSION_HEADER: APP_VERSION}).
+			SetCookies([]*http.Cookie{{Name: COOKIE_NAME, Value: cookie}}),
 	}
 }
 
@@ -48,18 +48,18 @@ func (c *Cambridge) GetLessonResponse(productCode, lessonId string) ([]string, e
 		return nil, err
 	}
 
-	ajaxDataValue := runtime.Get("ajaxData")
+	ajaxDataValue := runtime.Get(AJAX_DATA)
 	if ajaxDataValue == nil {
-		return nil, fmt.Errorf("ajaxData not found")
+		return nil, fmt.Errorf(AJAX_DATA_ERROR)
 	}
 
 	ajaxDataObject := ajaxDataValue.ToObject(runtime)
 	var results []string
 
-	normalQuestion := regexp.MustCompile(`<p>Incorrect!<br />\s*Correct answer:<br />\s*(.+)</p>`)
-	multiQuestion := regexp.MustCompile(`Correct Answer:&lt;br /> (.*?)&lt;/p>`)
-	choiceQuestion := regexp.MustCompile(`(?s)Correct answers:<br />(.*?)</p>`)
-	possibleAnswersQuestion := regexp.MustCompile(`(?s)Possible answers:<br />(.*?)</p>`)
+	normalQuestion := regexp.MustCompile(NORMAL_QUESTION_REGEX)
+	multiQuestion := regexp.MustCompile(MULTI_QUESTION_REGEX)
+	choiceQuestion := regexp.MustCompile(CHOICE_QUESTION_REGEX)
+	possibleAnswersQuestion := regexp.MustCompile(POSSIBLE_QUESTION_REGEX)
 
 	for _, key := range ajaxDataObject.Keys() {
 		dataValue := ajaxDataObject.Get(key)
