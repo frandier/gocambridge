@@ -96,10 +96,10 @@ func selectLesson(resp *cambridge.UnitsResult, cambridgeClient *cambridge.Cambri
 	parts := strings.Split(itemCode, "/")
 	lessonCode := parts[len(parts)-1]
 
-	return showSolution(cambridgeClient, product, lessonCode, resp, unitSelectedIndex)
+	return showSolution(cambridgeClient, product, lessonCode, resp, unitSelectedIndex, sectionSelectedIndex)
 }
 
-func showSolution(cambridgeClient *cambridge.Cambridge, product, lessonCode string, resp *cambridge.UnitsResult, unitSelectedIndex int) error {
+func showSolution(cambridgeClient *cambridge.Cambridge, product, lessonCode string, resp *cambridge.UnitsResult, unitSelectedIndex int, sectionSelectedIndex int) error {
 	solution, err := cambridgeClient.GetLessonResponse(product, lessonCode)
 	if err != nil {
 		return err
@@ -116,10 +116,10 @@ func showSolution(cambridgeClient *cambridge.Cambridge, product, lessonCode stri
 	t.AppendRows(tableRows)
 	t.Render()
 
-	return askForNextAction(resp, cambridgeClient, product, unitSelectedIndex)
+	return askForNextAction(resp, cambridgeClient, product, unitSelectedIndex, sectionSelectedIndex)
 }
 
-func askForNextAction(resp *cambridge.UnitsResult, cambridgeClient *cambridge.Cambridge, product string, unitSelectedIndex int) error {
+func askForNextAction(resp *cambridge.UnitsResult, cambridgeClient *cambridge.Cambridge, product string, unitSelectedIndex int, sectionSelectedIndex int) error {
 	prompt := promptui.Prompt{
 		Label: NextActionLabel,
 	}
@@ -133,13 +133,13 @@ func askForNextAction(resp *cambridge.UnitsResult, cambridgeClient *cambridge.Ca
 	case InitialKey:
 		return selectUnit(resp, cambridgeClient, product)
 	case BackKey:
-		return selectLesson(resp, cambridgeClient, product, unitSelectedIndex, 0)
+		return selectLesson(resp, cambridgeClient, product, unitSelectedIndex, sectionSelectedIndex)
 	case ExitKey:
 		fmt.Println(ExitMessage)
 		os.Exit(0)
 	default:
 		fmt.Println(InvalidOptionMessage)
-		return askForNextAction(resp, cambridgeClient, product, unitSelectedIndex)
+		return askForNextAction(resp, cambridgeClient, product, unitSelectedIndex, sectionSelectedIndex)
 	}
 
 	return nil
