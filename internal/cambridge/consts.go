@@ -16,6 +16,7 @@ const (
 	NORMAL_QUESTION_REGEX     = `<correctResponse>(.*?)<\/correctResponse>`
 	MULTI_QUESTION_REGEX      = `Correct Answer:&lt;br /> (.*?)&lt;/p>`
 	CHOICE_QUESTION_REGEX     = `(?s)Correct answers:<br />(.*?)</p>`
+	CHOICE_QUESTION_V2_REGEX  = `(?s)Correct answer:<br />(.*?)</p>`
 	VALUE_RESPONSE_REGEX      = `<value>(.*?)</value>`
 	POSSIBLE_QUESTION_REGEX   = `(?s)Possible answers:<br />(.*?)</p>`
 	QUESTION_IDENTIFIER_REGEX = `identifier="([^"]+)"`
