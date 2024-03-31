@@ -135,6 +135,7 @@ func askForNextAction(resp *cambridge.UnitsResult, cambridgeClient *cambridge.Ca
 	case BackKey:
 		return selectLesson(resp, cambridgeClient, product, unitSelectedIndex, sectionSelectedIndex)
 	case ExitKey:
+		clearAndPrintHeader()
 		fmt.Println(ExitMessage)
 		os.Exit(0)
 	default:
