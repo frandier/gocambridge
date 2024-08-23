@@ -61,6 +61,7 @@ func (c *Cambridge) GetLessonResponse(productCode, lessonId string) ([]string, e
 	genericQuestion := regexp.MustCompile(GENERIC_QUESTION_REGEX)
 	multiQuestion := regexp.MustCompile(MULTI_QUESTION_REGEX)
 	choiceQuestion := regexp.MustCompile(CHOICE_QUESTION_REGEX)
+	choiceQuestionV2 := regexp.MustCompile(CHOICE_QUESTION_V2_REGEX)
 	possibleAnswersQuestion := regexp.MustCompile(POSSIBLE_QUESTION_REGEX)
 	valueResponse := regexp.MustCompile(VALUE_RESPONSE_REGEX)
 
@@ -98,10 +99,13 @@ func (c *Cambridge) GetLessonResponse(productCode, lessonId string) ([]string, e
 		case "Identify:Select:Checkbox":
 			matches = choiceQuestion.FindAllStringSubmatch(dataValueStr, -1)
 			if len(matches) == 0 {
-				doc, _ := html.Parse(strings.NewReader(dataValueStr))
-				var correctAnswersText string
-				traverse(doc, &correctAnswersText)
-				return []string{correctAnswersText}, nil
+				matches = choiceQuestionV2.FindAllStringSubmatch(dataValueStr, -1)
+				if len(matches) == 0 {
+					doc, _ := html.Parse(strings.NewReader(dataValueStr))
+					var correctAnswersText string
+					traverse(doc, &correctAnswersText)
+					return []string{correctAnswersText}, nil
+				}
 			}
 		default:
 			matches = append(matches, possibleAnswersQuestion.FindAllStringSubmatch(dataValueStr, -1)...)
@@ -118,6 +122,7 @@ func (c *Cambridge) GetLessonResponse(productCode, lessonId string) ([]string, e
 
 				result := html.UnescapeString(match[1])
 				result = strings.ReplaceAll(result, "&apos;", "'")
+				result = cleanString(result)
 				results = append(results, result)
 			}
 		}

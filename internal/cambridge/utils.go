@@ -76,3 +76,13 @@ func traverse(n *html.Node, correctAnswersText *string) {
 		traverse(c, correctAnswersText)
 	}
 }
+
+func cleanString(input string) string {
+	endIndex := strings.Index(input, "</p>")
+	if endIndex != -1 {
+		textPart := input[:endIndex]
+		textPart = strings.TrimSpace(textPart)
+		return textPart
+	}
+	return input
+}
